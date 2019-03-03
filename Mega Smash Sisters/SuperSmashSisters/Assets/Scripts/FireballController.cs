@@ -11,7 +11,7 @@ public class FireballController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.position = new Vector2(transform.position.x + direction * speed, transform.position.y);
+        transform.position = new Vector2(transform.position.x + direction * speed * Time.timeScale, transform.position.y);
     }
 
     private void OnCollisionEnter2D(Collision2D collision)

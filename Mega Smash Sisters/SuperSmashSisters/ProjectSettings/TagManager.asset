@@ -6,6 +6,7 @@ TagManager:
   tags:
   - platform
   - fireball
+  - basicattackradius
   layers:
   - Default
   - TransparentFX
@@ -51,4 +52,7 @@ TagManager:
     locked: 0
   - name: toptop
     uniqueID: 1519621193
+    locked: 0
+  - name: basicattackrad
+    uniqueID: 3687468269
     locked: 0

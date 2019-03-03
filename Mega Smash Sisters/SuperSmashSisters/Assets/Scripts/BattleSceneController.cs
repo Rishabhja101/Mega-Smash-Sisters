@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class BattleSceneController : MonoBehaviour
 {
-    private GameObject pauseMenu;
+    public GameObject pauseMenu;
     public GameObject player1;
     public GameObject player2;
     public GameObject endGameScreen;
@@ -15,13 +15,7 @@ public class BattleSceneController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        pauseMenu = GameObject.Find("/PauseMenu");
-        Invoke("Delayed", 0.1f);
-    }
-
-    void Delayed()
-    {
-        pauseMenu.SetActive(false);
+        
     }
 
     // Update is called once per frame
@@ -58,7 +52,7 @@ public class BattleSceneController : MonoBehaviour
 
     public void PlayAgain()
     {
-        SceneManager.LoadScene("Main Scene");
+        SceneManager.LoadScene("AIScene");
     }
 
     public void BackToTitle()

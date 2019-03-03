@@ -18,9 +18,9 @@ public class FireballController : MonoBehaviour
     {
         if (collision.gameObject.name != col)
             Invoke("Die", 0.15f);
-        else
-            gameObject.GetComponent<CircleCollider2D>().isTrigger = true;
-        print(col + " : " + collision.gameObject.name);
+       // else
+       //     gameObject.GetComponent<CircleCollider2D>().isTrigger = true;
+        
     }
 
     private void OnCollisionExit2D(Collision2D collision)
@@ -29,7 +29,7 @@ public class FireballController : MonoBehaviour
         {
             gameObject.GetComponent<CircleCollider2D>().isTrigger = false;
         }
-        print("sdf");
+        print(col);
     }
 
     private void Die()

@@ -30,11 +30,10 @@ public class CharacterSelectorController : MonoBehaviour
         for (int i = 0; i < players; i++)
         {
             float pos = first + i * (width + 20);
-            playerBoxes[i] = Instantiate(playerBoxPrefab, new Vector3(i * 2.0F, 0, 0), Quaternion.identity);
-            //     playerBoxes[i].GetComponent<RectTransform>().sizeDelta.Set(200, 50);
-            playerBoxes[i].transform.localScale = new Vector3(1, 1, 1);
-            playerBoxes[i].transform.parent = GameObject.Find("/Canvas").transform;
-            print("hi");
+            pos -= 1020 / 2;
+            playerBoxes[i] = Instantiate(playerBoxPrefab, new Vector3(0, 0, 0), Quaternion.identity, GameObject.Find("/Canvas").transform);
+            playerBoxes[i].transform.localPosition = new Vector3(pos, -270, 0);
+            playerBoxes[i].GetComponent<RectTransform>().sizeDelta = new Vector2(width, 200);
         }
     }
 }

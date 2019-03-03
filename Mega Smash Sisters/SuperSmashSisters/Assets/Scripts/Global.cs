@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Global
 {
-    public static double backgroundMusicVolume = 0;
-    public static double soundEffectsVolume = 0;
+    public static float backgroundMusicVolume = 1;
+    public static float soundEffectsVolume = 1;
     
 }

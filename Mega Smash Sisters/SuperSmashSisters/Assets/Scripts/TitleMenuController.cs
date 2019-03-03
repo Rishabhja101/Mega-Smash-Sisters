@@ -28,7 +28,7 @@ public class TitleMenuController : MonoBehaviour
 
     public void OpenSettings()
     {
-        settings.SetActive(!settings.active);
+        settings.SetActive(!settings.activeInHierarchy);
     }
 
     public void QuitGame()

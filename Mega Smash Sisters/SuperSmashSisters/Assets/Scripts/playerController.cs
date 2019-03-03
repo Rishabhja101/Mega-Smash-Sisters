@@ -47,8 +47,8 @@ public class playerController : MonoBehaviour
                 {"left", KeyCode.A},
                 {"drop", KeyCode.S},
                 {"basic attack", KeyCode.LeftShift},
-                {"power attack", KeyCode.Space}
-
+                {"power attack", KeyCode.Space},
+                {"taunt", KeyCode.T}
             };
         } else
         {
@@ -59,7 +59,8 @@ public class playerController : MonoBehaviour
                 {"left", KeyCode.LeftArrow},
                 {"drop", KeyCode.DownArrow},
                 {"basic attack", KeyCode.Mouse0},
-                {"power attack", KeyCode.Mouse1}
+                {"power attack", KeyCode.Mouse1},
+                {"taunt", KeyCode.Period}
             };
         }
     }
@@ -130,6 +131,12 @@ public class playerController : MonoBehaviour
             animator.SetTrigger("powerAttack");
             freezeXScale();
             Invoke("freezeXScale", 0.5f);
+        }
+
+        //taunt
+        if (Input.GetKeyDown(controls["taunt"]))
+        {
+            animator.SetTrigger("taunt");
         }
     }
 

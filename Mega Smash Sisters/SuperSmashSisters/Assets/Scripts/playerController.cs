@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class playerController : MonoBehaviour
 {
@@ -34,12 +35,19 @@ public class playerController : MonoBehaviour
 
     private Animator animator;
 
+    public Text healthText;
+    private int health = 0;
+
+    private Vector2 knockbackForce;
+
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         remainingJumps = maxJumps;
         animator = GetComponent<Animator>();
+        healthText.text = health.ToString();
+        knockbackForce = new Vector2(0,0);
 
         if (isPlayerOne)
         {
@@ -85,10 +93,18 @@ public class playerController : MonoBehaviour
         {
             flip();
         }
+
+        rb.AddForce(knockbackForce);
     }
 
     void Update()
     {
+        //check if fallen off
+        if (transform.position.y <= -20)
+        {
+            transform.position = new Vector2(0, 15); ;
+        }
+
         //move
         if (Input.GetKeyDown(controls["left"]))
         {
@@ -175,6 +191,13 @@ public class playerController : MonoBehaviour
             isOnPlatform = true;
             currentPlatform = collision.gameObject;
         }
+
+        if (collision.gameObject.tag == "fireball")
+        {
+            takeDamage(10);
+            knockbackForce = transform.right * collision.gameObject.GetComponent<FireballController>().direction * health * 25;
+            Invoke("resetKnockbackForce", 0.5f);
+        }
     }
 
     private void OnCollisionExit2D(Collision2D collision)
@@ -193,5 +216,16 @@ public class playerController : MonoBehaviour
     void freezeXScale()
     {
         xScaleFreeze = !xScaleFreeze;
+    }
+
+    public void takeDamage(int damage)
+    {
+        health += damage;
+        healthText.text = health.ToString();
+    }
+
+    void resetKnockbackForce()
+    {
+        knockbackForce = new Vector2(0,0);
     }
 }

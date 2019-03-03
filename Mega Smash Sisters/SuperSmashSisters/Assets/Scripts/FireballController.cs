@@ -17,7 +17,7 @@ public class FireballController : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.name != col)
-            Invoke("Die", 0.15f);
+            Invoke("Die", 0f);
        // else
        //     gameObject.GetComponent<CircleCollider2D>().isTrigger = true;
         

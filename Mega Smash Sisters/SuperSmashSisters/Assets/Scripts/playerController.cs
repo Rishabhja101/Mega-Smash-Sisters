@@ -4,14 +4,16 @@ using UnityEngine;
 
 public class playerController : MonoBehaviour
 {
-
+    public bool isPlayerOne;
     public float speed;
     public float jumpForce;
+    public Dictionary<string, KeyCode> controls;
 
-    private float moveInput;
+    private float horizontalMovement = 0;
     private Rigidbody2D rb;
 
     private bool facingRight = true;
+    private bool xScaleFreeze = false;
 
     private bool isGrounded;
     public Transform groundCheck;
@@ -27,11 +29,39 @@ public class playerController : MonoBehaviour
 
     private GameObject currentPlatform;
 
+    private Animator animator;
+
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         remainingJumps = maxJumps;
+        animator = GetComponent<Animator>();
+
+        if (isPlayerOne)
+        {
+            controls = new Dictionary<string, KeyCode>()
+            {
+                {"jump", KeyCode.W},
+                {"right", KeyCode.D},
+                {"left", KeyCode.A},
+                {"drop", KeyCode.S},
+                {"basic attack", KeyCode.LeftShift},
+                {"power attack", KeyCode.Space}
+
+            };
+        } else
+        {
+            controls = new Dictionary<string, KeyCode>()
+            {
+                {"jump", KeyCode.UpArrow},
+                {"right", KeyCode.RightArrow},
+                {"left", KeyCode.LeftArrow},
+                {"drop", KeyCode.DownArrow},
+                {"basic attack", KeyCode.Mouse0},
+                {"power attack", KeyCode.Mouse1}
+            };
+        }
     }
 
     // Update is called once per frame
@@ -40,16 +70,14 @@ public class playerController : MonoBehaviour
         //basic movement
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, checkRadius, whatIsGround);
 
-        moveInput = Input.GetAxisRaw("Horizontal");
+        rb.velocity = new Vector2(horizontalMovement * speed, rb.velocity.y);
 
-        rb.velocity = new Vector2(moveInput * speed, rb.velocity.y);
-
-        //flip[ character
-        if (!facingRight && moveInput > 0)
+        //flip character
+        if (!facingRight && horizontalMovement > 0 && !xScaleFreeze)
         {
             flip();
         }
-        else if (facingRight && moveInput < 0)
+        else if (facingRight && horizontalMovement < 0 && !xScaleFreeze)
         {
             flip();
         }
@@ -57,22 +85,51 @@ public class playerController : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.W) && remainingJumps > 0)
+        //move
+        if (Input.GetKeyDown(controls["left"]))
+        {
+            horizontalMovement += -1;
+        }
+        if (Input.GetKeyDown(controls["right"]))
+        {
+            horizontalMovement += 1;
+        }
+        if (Input.GetKeyUp(controls["left"]))
+        {
+            horizontalMovement -= -1;
+        }
+        if (Input.GetKeyUp(controls["right"]))
+        {
+            horizontalMovement -= 1;
+        }
+
+        //jump
+        if (Input.GetKeyDown(controls["jump"]) && remainingJumps > 0)
         {
             rb.velocity = new Vector2(rb.velocity.x, jumpForce);
             remainingJumps--;
             nextTimeToCheckIfGrounded = Time.time + .15f;
         }
 
-        if ((isGrounded || isOnPlatform) && remainingJumps < maxJumps && Time.time >= nextTimeToCheckIfGrounded)
+        if ((isGrounded || isOnPlatform) && remainingJumps < maxJumps && Time.time >= nextTimeToCheckIfGrounded &&
+            rb.velocity.y == 0)
         {
             remainingJumps = maxJumps;
         }
 
-        if (Input.GetKeyDown(KeyCode.S) && isOnPlatform)
+        //drop
+        if (Input.GetKeyDown(controls["drop"]) && isOnPlatform)
         {
             platformDrop();
-            Invoke("platformDrop", 0.2f);
+            Invoke("platformDrop", 0.4f);
+        }
+
+        //attack
+        if (Input.GetKeyDown(controls["power attack"]))
+        {
+            animator.SetTrigger("powerAttack");
+            freezeXScale();
+            Invoke("freezeXScale", 0.5f);
         }
     }
 
@@ -104,5 +161,10 @@ public class playerController : MonoBehaviour
     void platformDrop()
     {
         currentPlatform.GetComponent<BoxCollider2D>().enabled = !currentPlatform.GetComponent<BoxCollider2D>().enabled;
+    }
+
+    void freezeXScale()
+    {
+        xScaleFreeze = !xScaleFreeze;
     }
 }

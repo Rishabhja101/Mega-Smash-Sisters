@@ -44,6 +44,10 @@ public class playerController : MonoBehaviour
     public AudioClip fire;
     public AudioClip hit;
 
+    public Text livesDisplay;
+
+    public int lives = 3;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -78,6 +82,11 @@ public class playerController : MonoBehaviour
                 {"taunt", KeyCode.Period}
             };
         }
+        livesDisplay.text = " ";
+        for (int i = 0; i < lives; i++)
+        {
+            livesDisplay.text += "* ";
+        }
     }
 
     // Update is called once per frame
@@ -106,7 +115,8 @@ public class playerController : MonoBehaviour
         //check if fallen off
         if (transform.position.y <= -20)
         {
-            transform.position = new Vector2(0, 15); ;
+            Kill();
+            //transform.position = new Vector2(0, 15);
         }
 
         //move
@@ -217,8 +227,8 @@ public class playerController : MonoBehaviour
 
         if (collision.gameObject.tag == "fireball")
         {
-            takeDamage(10);
             knockbackForce = transform.right * collision.gameObject.GetComponent<FireballController>().direction * health * 25;
+            takeDamage(10);
             Invoke("resetKnockbackForce", 0.5f);
         }
     }
@@ -247,10 +257,40 @@ public class playerController : MonoBehaviour
         healthText.text = health.ToString();
         soundEffects.clip = hit;
         soundEffects.Play();
+        if (health >= 250 && Random.Range(0, 100) < 25 + health / 250)
+        {
+            knockbackForce = (transform.right * 8 + transform.up) * 500;
+            gameObject.GetComponent<BoxCollider2D>().isTrigger = true;
+            Invoke("KoolKill", 0.5f);
+        }
+    }
+
+    void KoolKill()
+    {
+        knockbackForce = (transform.right * 10 + transform.up) * 500;
+        Invoke("resetKnockbackForce", 0.5f);
+        Kill();
+    }
+
+    void Respawn()
+    {
+        transform.localPosition = new Vector2(10, 0);
+        livesDisplay.text = " ";
+        for (int i = 0; i < lives; i++)
+        {
+            livesDisplay.text += "* ";
+        }
     }
 
     void resetKnockbackForce()
     {
         knockbackForce = new Vector2(0,0);
+        gameObject.GetComponent<BoxCollider2D>().isTrigger = false;
+    }
+
+    void Kill()
+    {
+        lives--;
+        Respawn();
     }
 }

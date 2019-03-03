@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 3978266346500509605}
   m_Layer: 0
   m_Name: fireball
-  m_TagString: Untagged
+  m_TagString: fireball
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -114,6 +114,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   direction: 1
+  speed: 1.3
   col: 
 --- !u!58 &3978266346500509605
 CircleCollider2D:

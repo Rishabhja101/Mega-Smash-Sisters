@@ -123,7 +123,7 @@ public class playerController : MonoBehaviour
             horizontalMovement -= 1;
         }
 
-        if (horizontalMovement != 0)
+        if (horizontalMovement != 0 && (isGrounded || isOnPlatform))
         {
             animator.SetBool("isRunning", true);
         } else
@@ -134,10 +134,10 @@ public class playerController : MonoBehaviour
         //jump
         if (Input.GetKeyDown(controls["jump"]) && remainingJumps > 0)
         {
-            if (isGrounded)
+            if ((isGrounded || isOnPlatform))
             {
                 animator.SetTrigger("jump");
-                Invoke("jump", 0.3f);
+                Invoke("jump", 0.1f);
             } else
             {
                 animator.SetTrigger("double jump");

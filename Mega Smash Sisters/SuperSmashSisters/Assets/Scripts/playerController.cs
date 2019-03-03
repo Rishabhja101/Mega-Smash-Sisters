@@ -170,6 +170,10 @@ public class playerController : MonoBehaviour
             freezeXScale();
             Invoke("freezeXScale", 0.5f);
         }
+        else if (Input.GetKeyDown(controls["basic attack"]) && Time.timeScale > 0)
+        {
+            animator.SetTrigger("basicAttack");
+        }
 
         //taunt
         if (Input.GetKeyDown(controls["taunt"]) && Time.timeScale > 0)

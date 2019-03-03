@@ -22,6 +22,11 @@ public class SettingsController : MonoBehaviour
         soundEffectSlider.volume = Global.soundEffectsVolume;
         BackgroundMusicSlider.value = Global.backgroundMusicVolume;
         SoundEffectSlider.value = Global.soundEffectsVolume;
+        try
+        {
+            GameObject.Find("/PauseMenu").SetActive(false);
+        }
+        catch { }
         for (int i = 0; i < soundEffectSliders.Length; i++)
         {
             soundEffectSliders[i].volume = Global.soundEffectsVolume;

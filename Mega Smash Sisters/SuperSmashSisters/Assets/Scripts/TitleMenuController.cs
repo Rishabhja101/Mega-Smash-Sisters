@@ -23,7 +23,7 @@ public class TitleMenuController : MonoBehaviour
 
     public void StartGame()
     {
-        SceneManager.LoadScene(""); //change to the next scene
+        SceneManager.LoadScene("Main Scene"); //change to the next scene
     }
 
     public void OpenSettings()

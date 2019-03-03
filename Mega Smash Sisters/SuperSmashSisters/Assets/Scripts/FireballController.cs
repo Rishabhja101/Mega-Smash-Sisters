@@ -29,7 +29,6 @@ public class FireballController : MonoBehaviour
         {
             gameObject.GetComponent<CircleCollider2D>().isTrigger = false;
         }
-        print(col);
     }
 
     private void Die()

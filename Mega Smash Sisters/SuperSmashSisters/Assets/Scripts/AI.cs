@@ -1,10 +1,11 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class playerController : MonoBehaviour
+public class AI : MonoBehaviour
 {
+    public GameObject enemy;
     public bool isPlayerOne;
     public float speed;
     public float jumpForce;
@@ -39,7 +40,7 @@ public class playerController : MonoBehaviour
     private int health = 0;
 
     private Vector2 knockbackForce;
-    
+
     public AudioSource soundEffects;
     public AudioClip fire;
     public AudioClip hit;
@@ -48,9 +49,10 @@ public class playerController : MonoBehaviour
 
     public int lives = 3;
 
-    public int recharge2 = 0;
-
     public GameObject basicAttackRadius;
+
+    int recharge = 0;
+    int recharge2 = 0;
 
     // Start is called before the first frame update
     void Start()
@@ -59,7 +61,7 @@ public class playerController : MonoBehaviour
         remainingJumps = maxJumps;
         animator = GetComponent<Animator>();
         healthText.text = health.ToString();
-        knockbackForce = new Vector2(0,0);
+        knockbackForce = new Vector2(0, 0);
 
         if (isPlayerOne)
         {
@@ -69,11 +71,12 @@ public class playerController : MonoBehaviour
                 {"right", KeyCode.D},
                 {"left", KeyCode.A},
                 {"drop", KeyCode.S},
-                {"basic attack", KeyCode.LeftControl},
+                {"basic attack", KeyCode.LeftShift},
                 {"power attack", KeyCode.Space},
                 {"taunt", KeyCode.T}
             };
-        } else
+        }
+        else
         {
             controls = new Dictionary<string, KeyCode>()
             {
@@ -96,20 +99,25 @@ public class playerController : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
+        if (recharge > 0)
+        {
+            recharge--;
+        }
         if (recharge2 > 0)
+        {
             recharge2--;
-
+        }
         //basic movement
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, checkRadius, whatIsGround);
 
         rb.velocity = new Vector2(horizontalMovement * speed, rb.velocity.y);
 
         //flip character
-        if (!facingRight && horizontalMovement > 0 && !xScaleFreeze)
+        if (!facingRight && horizontalMovement < 0 && !xScaleFreeze)
         {
             flip();
         }
-        else if (facingRight && horizontalMovement < 0 && !xScaleFreeze)
+        else if (facingRight && horizontalMovement > 0 && !xScaleFreeze)
         {
             flip();
         }
@@ -154,29 +162,104 @@ public class playerController : MonoBehaviour
             //transform.position = new Vector2(0, 15);
         }
 
+        //determine move
+
+        if (enemy.transform.position.y - transform.position.y < 1 && enemy.transform.position.y - transform.position.y > -1 && Time.timeScale > 0)
+        {
+            
+            if (Mathf.Abs(enemy.transform.position.x - transform.position.x) > 5)
+            {
+                print((enemy.transform.position - transform.position).magnitude);
+                if (enemy.transform.position.x > transform.position.x)
+                {
+                    horizontalMovement = 1;
+                    if (facingRight && !xScaleFreeze)
+                    {
+                        flip();
+                    }
+                }
+                else if (enemy.transform.position.x < transform.position.x)
+                {
+                    horizontalMovement = -1;
+                    if (!facingRight && !xScaleFreeze)
+                    {
+                        flip();
+                    }
+                }
+            }
+            else
+            {
+                if (horizontalMovement > 0)
+                {
+                    horizontalMovement = 0;
+                }
+                else if (horizontalMovement < 0)
+                {
+                    horizontalMovement = 0;
+                }
+
+            }
+            if (Mathf.Abs(enemy.transform.position.x - transform.position.x) < 6 && recharge2 == 0)
+            {
+                basicAttackRadius.SetActive(true);
+                recharge2 = 10;
+                animator.SetTrigger("basicAttack");
+                Invoke("StopBasicAttack", 2f);
+            }
+            if (recharge == 0)
+            {
+                animator.SetTrigger("powerAttack");
+                Invoke("shootBall", 0.4f);
+                freezeXScale();
+                Invoke("freezeXScale", 0.5f);
+                recharge = 40;
+            }
+
+        }
+        else if (enemy.transform.position.y > transform.position.y && remainingJumps > 0 && Time.timeScale > 0)
+        {
+            if (isGrounded || isOnPlatform)
+            {
+                animator.SetTrigger("jump");
+                Invoke("jump", 0.1f);
+            }
+            else
+            {
+                animator.SetTrigger("double jump");
+                Invoke("jump", 0.1f);
+            }
+        }
+        else if (enemy.transform.position.y < transform.position.y && Time.timeScale > 0)
+        {
+            platformDrop();
+            Invoke("platformDrop", 0.4f);
+        }
+
+
         //move
 
-        if (Input.GetKeyDown(controls["left"]) && Time.timeScale > 0)
-        {
-            horizontalMovement = -1;
-        }
-        if (Input.GetKeyDown(controls["right"]) && Time.timeScale > 0)
-        {
-            horizontalMovement = 1;
-        }
-        if (Input.GetKeyUp(controls["left"]) && Time.timeScale > 0)
-        {
-            horizontalMovement = 0;
-        }
-        if (Input.GetKeyUp(controls["right"]) && Time.timeScale > 0)
-        {
-            horizontalMovement = 0;
-        }
+        //if (Input.GetKeyDown(controls["left"]) && Time.timeScale > 0)
+        //{
+        //    horizontalMovement += -1;
+        //}
+        //if (Input.GetKeyDown(controls["right"]) && Time.timeScale > 0)
+        //{
+        //    horizontalMovement += 1;
+        //}
+        //if (Input.GetKeyUp(controls["left"]) && Time.timeScale > 0)
+        //{
+        //    horizontalMovement -= -1;
+        //}
+        //if (Input.GetKeyUp(controls["right"]) && Time.timeScale > 0)
+        //{
+        //    horizontalMovement -= 1;
+        //}
 
         if (horizontalMovement != 0)
         {
             animator.SetBool("isRunning", true);
-        } else
+        }
+        else
         {
             animator.SetBool("isRunning", false);
         }
@@ -188,7 +271,8 @@ public class playerController : MonoBehaviour
             {
                 animator.SetTrigger("jump");
                 Invoke("jump", 0.1f);
-            } else
+            }
+            else
             {
                 animator.SetTrigger("double jump");
                 Invoke("jump", 0.1f);
@@ -216,12 +300,9 @@ public class playerController : MonoBehaviour
             freezeXScale();
             Invoke("freezeXScale", 0.5f);
         }
-        else if (Input.GetKeyDown(controls["basic attack"]) && recharge2 == 0 && Time.timeScale > 0)
+        else if (Input.GetKeyDown(controls["basic attack"]) && Time.timeScale > 0)
         {
-            recharge2 = 10;
-            basicAttackRadius.SetActive(true);
             animator.SetTrigger("basicAttack");
-            Invoke("StopBasicAttack", 2f);
         }
 
         //taunt
@@ -242,7 +323,7 @@ public class playerController : MonoBehaviour
         remainingJumps--;
         nextTimeToCheckIfGrounded = Time.time + .15f;
     }
-    
+
     void shootBall()
     {
         GameObject fireball = Instantiate(fireballprefab);
@@ -330,7 +411,7 @@ public class playerController : MonoBehaviour
 
     void resetKnockbackForce()
     {
-        knockbackForce = new Vector2(0,0);
+        knockbackForce = new Vector2(0, 0);
         gameObject.GetComponent<BoxCollider2D>().isTrigger = false;
     }
 
@@ -346,7 +427,7 @@ public class playerController : MonoBehaviour
         if (collision.tag == "basicattackradius" && collision.gameObject.name != gameObject.name)
         {
             takeDamage(15);
-            knockbackForce = ( transform.position - collision.gameObject.transform.position )* health;
+            knockbackForce = (transform.position - collision.gameObject.transform.position) * health;
             Invoke("resetKnockbackForce", 0.5f);
         }
     }

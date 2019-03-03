@@ -134,9 +134,15 @@ public class playerController : MonoBehaviour
         //jump
         if (Input.GetKeyDown(controls["jump"]) && remainingJumps > 0)
         {
-            rb.velocity = new Vector2(rb.velocity.x, jumpForce);
-            remainingJumps--;
-            nextTimeToCheckIfGrounded = Time.time + .15f;
+            if (isGrounded)
+            {
+                animator.SetTrigger("jump");
+                Invoke("jump", 0.3f);
+            } else
+            {
+                animator.SetTrigger("double jump");
+                Invoke("jump", 0.1f);
+            }
         }
 
         if ((isGrounded || isOnPlatform) && remainingJumps < maxJumps && Time.time >= nextTimeToCheckIfGrounded &&
@@ -166,6 +172,13 @@ public class playerController : MonoBehaviour
         {
             animator.SetTrigger("taunt");
         }
+    }
+
+    void jump()
+    {
+        rb.velocity = new Vector2(rb.velocity.x, jumpForce);
+        remainingJumps--;
+        nextTimeToCheckIfGrounded = Time.time + .15f;
     }
 
     void shootBall()

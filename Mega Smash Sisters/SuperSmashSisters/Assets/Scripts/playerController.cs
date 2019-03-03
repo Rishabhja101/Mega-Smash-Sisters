@@ -18,13 +18,14 @@ public class playerController : MonoBehaviour
     public float checkRadius;
     public LayerMask whatIsGround;
 
-    private bool isOnPlatform;
-    public LayerMask whatIsPlatform;
+    private bool isOnPlatform = false;
 
     public int maxJumps;
     private int remainingJumps;
 
     private float nextTimeToCheckIfGrounded = 0f;
+
+    private GameObject currentPlatform;
 
     // Start is called before the first frame update
     void Start()
@@ -38,7 +39,6 @@ public class playerController : MonoBehaviour
     {
         //basic movement
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, checkRadius, whatIsGround);
-        isOnPlatform = Physics2D.OverlapCircle(groundCheck.position, checkRadius, whatIsPlatform);
 
         moveInput = Input.GetAxisRaw("Horizontal");
 
@@ -48,7 +48,8 @@ public class playerController : MonoBehaviour
         if (!facingRight && moveInput > 0)
         {
             flip();
-        } else if (facingRight && moveInput < 0)
+        }
+        else if (facingRight && moveInput < 0)
         {
             flip();
         }
@@ -56,7 +57,7 @@ public class playerController : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && remainingJumps > 0)
+        if (Input.GetKeyDown(KeyCode.W) && remainingJumps > 0)
         {
             rb.velocity = new Vector2(rb.velocity.x, jumpForce);
             remainingJumps--;
@@ -70,7 +71,8 @@ public class playerController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.S) && isOnPlatform)
         {
-            rb.position = new Vector2(rb.position.x, rb.position.y - 1.5f);
+            platformDrop();
+            Invoke("platformDrop", 0.2f);
         }
     }
 
@@ -80,5 +82,27 @@ public class playerController : MonoBehaviour
         Vector3 scaler = transform.localScale;
         scaler.x *= -1;
         transform.localScale = scaler;
+    }
+
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.layer == 10) //platform layer
+        {
+            isOnPlatform = true;
+            currentPlatform = collision.gameObject;
+        }
+    }
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.gameObject.layer == 10) //platform layer
+        {
+            isOnPlatform = false;
+        }
+    }
+
+    void platformDrop()
+    {
+        currentPlatform.GetComponent<BoxCollider2D>().enabled = !currentPlatform.GetComponent<BoxCollider2D>().enabled;
     }
 }

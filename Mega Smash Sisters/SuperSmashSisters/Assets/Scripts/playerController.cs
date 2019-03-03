@@ -39,7 +39,7 @@ public class playerController : MonoBehaviour
     private int health = 0;
 
     private Vector2 knockbackForce;
-
+    
     public AudioSource soundEffects;
     public AudioClip fire;
     public AudioClip hit;
@@ -120,6 +120,7 @@ public class playerController : MonoBehaviour
         }
 
         //move
+
         if (Input.GetKeyDown(controls["left"]) && Time.timeScale > 0)
         {
             horizontalMovement += -1;
@@ -198,7 +199,7 @@ public class playerController : MonoBehaviour
         remainingJumps--;
         nextTimeToCheckIfGrounded = Time.time + .15f;
     }
-
+    
     void shootBall()
     {
         GameObject fireball = Instantiate(fireballprefab);

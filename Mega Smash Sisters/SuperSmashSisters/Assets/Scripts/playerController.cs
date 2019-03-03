@@ -19,6 +19,8 @@ public class playerController : MonoBehaviour
     public Transform groundCheck;
     public float checkRadius;
     public LayerMask whatIsGround;
+    public GameObject fireballprefab;
+    public GameObject shooterLoc;
 
     private bool isOnPlatform = false;
 
@@ -128,9 +130,18 @@ public class playerController : MonoBehaviour
         if (Input.GetKeyDown(controls["power attack"]))
         {
             animator.SetTrigger("powerAttack");
+            Invoke("shootBall", 0.4f);
             freezeXScale();
             Invoke("freezeXScale", 0.5f);
         }
+    }
+
+    void shootBall()
+    {
+        GameObject fireball = Instantiate(fireballprefab);
+        fireball.transform.position = new Vector2(shooterLoc.transform.transform.position.x + 5 * transform.localScale.x - 0.8f, shooterLoc.transform.position.y);
+        fireball.GetComponent<FireballController>().direction = transform.localScale.x;
+        fireball.GetComponent<FireballController>().col = gameObject.name;
     }
 
     void flip()

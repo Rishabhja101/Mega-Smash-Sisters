@@ -104,6 +104,14 @@ public class playerController : MonoBehaviour
             horizontalMovement -= 1;
         }
 
+        if (horizontalMovement != 0)
+        {
+            animator.SetBool("isRunning", true);
+        } else
+        {
+            animator.SetBool("isRunning", false);
+        }
+
         //jump
         if (Input.GetKeyDown(controls["jump"]) && remainingJumps > 0)
         {

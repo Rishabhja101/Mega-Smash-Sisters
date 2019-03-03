@@ -268,19 +268,21 @@ public class playerController : MonoBehaviour
 
     void KoolKill()
     {
-        knockbackForce = (transform.right * 10 + transform.up) * 500;
+        knockbackForce = (transform.right * 10 * knockbackForce.magnitude / Mathf.Abs(knockbackForce.magnitude) + transform.up) * 500;
         Invoke("resetKnockbackForce", 0.5f);
         Kill();
     }
 
     void Respawn()
     {
-        transform.localPosition = new Vector2(10, 0);
         livesDisplay.text = " ";
         for (int i = 0; i < lives; i++)
         {
             livesDisplay.text += "* ";
         }
+        health = 0;
+        healthText.text = health.ToString();
+        transform.localPosition = new Vector2(0, 7);
     }
 
     void resetKnockbackForce()

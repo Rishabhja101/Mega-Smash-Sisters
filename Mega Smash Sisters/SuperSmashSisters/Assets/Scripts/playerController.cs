@@ -21,14 +21,16 @@ public class playerController : MonoBehaviour
     private bool isOnPlatform;
     public LayerMask whatIsPlatform;
 
-    public int extraJumps = 2;
-    private int remainingExtraJumps;
+    public int maxJumps;
+    private int remainingJumps;
+
+    private float nextTimeToCheckIfGrounded = 0f;
 
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        remainingExtraJumps = extraJumps;
+        remainingJumps = maxJumps;
     }
 
     // Update is called once per frame
@@ -54,15 +56,16 @@ public class playerController : MonoBehaviour
 
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.Space) && remainingExtraJumps > 0)
+        if (Input.GetKeyDown(KeyCode.Space) && remainingJumps > 0)
         {
             rb.velocity = new Vector2(rb.velocity.x, jumpForce);
-            remainingExtraJumps--;
+            remainingJumps--;
+            nextTimeToCheckIfGrounded = Time.time + .15f;
         }
 
-        if ((isGrounded || isOnPlatform) && remainingExtraJumps < extraJumps)
+        if ((isGrounded || isOnPlatform) && remainingJumps < maxJumps && Time.time >= nextTimeToCheckIfGrounded)
         {
-            remainingExtraJumps = extraJumps;
+            remainingJumps = maxJumps;
         }
 
         if (Input.GetKeyDown(KeyCode.S) && isOnPlatform)

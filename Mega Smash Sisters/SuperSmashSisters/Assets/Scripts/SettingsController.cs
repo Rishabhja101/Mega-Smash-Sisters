@@ -9,6 +9,7 @@ public class SettingsController : MonoBehaviour
     private AudioSource soundEffectSlider;
     private Slider BackgroundMusicSlider;
     private Slider SoundEffectSlider;
+    public AudioSource[] soundEffectSliders;
 
     // Use this for initialization
     void Start ()
@@ -21,6 +22,10 @@ public class SettingsController : MonoBehaviour
         soundEffectSlider.volume = Global.soundEffectsVolume;
         BackgroundMusicSlider.value = Global.backgroundMusicVolume;
         SoundEffectSlider.value = Global.soundEffectsVolume;
+        for (int i = 0; i < soundEffectSliders.Length; i++)
+        {
+            soundEffectSliders[i].volume = Global.soundEffectsVolume;
+        }
     }
 
     public void setBackgroundVolume()

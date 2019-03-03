@@ -40,6 +40,10 @@ public class playerController : MonoBehaviour
 
     private Vector2 knockbackForce;
 
+    public AudioSource soundEffects;
+    public AudioClip fire;
+    public AudioClip hit;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -187,6 +191,8 @@ public class playerController : MonoBehaviour
         fireball.transform.position = new Vector2(shooterLoc.transform.transform.position.x + 5 * transform.localScale.x - 0.8f, shooterLoc.transform.position.y);
         fireball.GetComponent<FireballController>().direction = transform.localScale.x;
         fireball.GetComponent<FireballController>().col = gameObject.name;
+        soundEffects.clip = fire;
+        soundEffects.Play();
     }
 
     void flip()
@@ -235,6 +241,8 @@ public class playerController : MonoBehaviour
     {
         health += damage;
         healthText.text = health.ToString();
+        soundEffects.clip = hit;
+        soundEffects.Play();
     }
 
     void resetKnockbackForce()

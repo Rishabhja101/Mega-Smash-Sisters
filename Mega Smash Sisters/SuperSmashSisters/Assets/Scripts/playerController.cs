@@ -40,6 +40,10 @@ public class playerController : MonoBehaviour
 
     private Vector2 knockbackForce;
 
+    public AudioSource soundEffects;
+    public AudioClip fire;
+    public AudioClip hit;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -106,24 +110,24 @@ public class playerController : MonoBehaviour
         }
 
         //move
-        if (Input.GetKeyDown(controls["left"]))
+        if (Input.GetKeyDown(controls["left"]) && Time.timeScale > 0)
         {
             horizontalMovement += -1;
         }
-        if (Input.GetKeyDown(controls["right"]))
+        if (Input.GetKeyDown(controls["right"]) && Time.timeScale > 0)
         {
             horizontalMovement += 1;
         }
-        if (Input.GetKeyUp(controls["left"]))
+        if (Input.GetKeyUp(controls["left"]) && Time.timeScale > 0)
         {
             horizontalMovement -= -1;
         }
-        if (Input.GetKeyUp(controls["right"]))
+        if (Input.GetKeyUp(controls["right"]) && Time.timeScale > 0)
         {
             horizontalMovement -= 1;
         }
 
-        if (horizontalMovement != 0 && (isGrounded || isOnPlatform))
+        if (horizontalMovement != 0)
         {
             animator.SetBool("isRunning", true);
         } else
@@ -132,9 +136,9 @@ public class playerController : MonoBehaviour
         }
 
         //jump
-        if (Input.GetKeyDown(controls["jump"]) && remainingJumps > 0)
+        if (Input.GetKeyDown(controls["jump"]) && remainingJumps > 0 && Time.timeScale > 0)
         {
-            if ((isGrounded || isOnPlatform))
+            if (isGrounded || isOnPlatform)
             {
                 animator.SetTrigger("jump");
                 Invoke("jump", 0.1f);
@@ -152,14 +156,14 @@ public class playerController : MonoBehaviour
         }
 
         //drop
-        if (Input.GetKeyDown(controls["drop"]) && isOnPlatform)
+        if (Input.GetKeyDown(controls["drop"]) && isOnPlatform && Time.timeScale > 0)
         {
             platformDrop();
             Invoke("platformDrop", 0.4f);
         }
 
         //attack
-        if (Input.GetKeyDown(controls["power attack"]))
+        if (Input.GetKeyDown(controls["power attack"]) && Time.timeScale > 0)
         {
             animator.SetTrigger("powerAttack");
             Invoke("shootBall", 0.4f);
@@ -168,7 +172,7 @@ public class playerController : MonoBehaviour
         }
 
         //taunt
-        if (Input.GetKeyDown(controls["taunt"]))
+        if (Input.GetKeyDown(controls["taunt"]) && Time.timeScale > 0)
         {
             animator.SetTrigger("taunt");
         }
@@ -187,6 +191,8 @@ public class playerController : MonoBehaviour
         fireball.transform.position = new Vector2(shooterLoc.transform.transform.position.x + 5 * transform.localScale.x - 0.8f, shooterLoc.transform.position.y);
         fireball.GetComponent<FireballController>().direction = transform.localScale.x;
         fireball.GetComponent<FireballController>().col = gameObject.name;
+        soundEffects.clip = fire;
+        soundEffects.Play();
     }
 
     void flip()
@@ -235,6 +241,8 @@ public class playerController : MonoBehaviour
     {
         health += damage;
         healthText.text = health.ToString();
+        soundEffects.clip = hit;
+        soundEffects.Play();
     }
 
     void resetKnockbackForce()

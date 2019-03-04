@@ -20,4 +20,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/CharacterSelector.unity
     guid: 1b32dae946049734883a3bbeb779fa33
+  - enabled: 1
+    path: Assets/Scenes/AIScene.unity
+    guid: 95a3b19f3b6d6ba4198d0d54adb03b2b
   m_configObjects: {}
